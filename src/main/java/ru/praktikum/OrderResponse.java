@@ -20,7 +20,6 @@ public class OrderResponse extends RestAssuredClient{
                 .then();
     }
 
-    //todo PUT Orders - Отменить заказ не работает
     @Step("Отменяем заказ")
     public boolean cancellationOrder(TrackOrder trackOrder){
         return given()

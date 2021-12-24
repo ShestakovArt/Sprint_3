@@ -2,7 +2,7 @@ package ru.praktikum;
 
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
-import jdk.jfr.Description;
+import io.qameta.allure.Description;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -35,11 +35,19 @@ public class CreatingCourierTest {
     public void testSuccessfulCreationCourier(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
-
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
     }
 
     @Test
@@ -51,7 +59,11 @@ public class CreatingCourierTest {
         ValidatableResponse createResponse = courierClient.createResponse(courier);
         createResponse.statusCode(SC_CREATED);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
     }
 
     @Test
@@ -63,7 +75,11 @@ public class CreatingCourierTest {
         ValidatableResponse createResponse = courierClient.createResponse(courier);
         createResponse.assertThat().body("ok", equalTo(true));
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
     }
 
     @Test
@@ -72,10 +88,19 @@ public class CreatingCourierTest {
     public void testCannotCreateTwoIdenticalCouriers(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreatedFirstCourier = courierClient.created(courier);
+        boolean isCreatedFirstCourier = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreatedFirstCourier);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
 
         ValidatableResponse createResponse = courierClient.createResponse(courier);
         createResponse.statusCode(SC_CONFLICT);

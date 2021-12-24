@@ -2,7 +2,8 @@ package ru.praktikum;
 
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
-import jdk.jfr.Description;
+import io.qameta.allure.Description;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +19,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class CreatingOrderTest {
     public OrderResponse orderResponse;
-// todo PUT Orders - Отменить заказ не работает
-//  public TrackOrder trackOrder;
+    public TrackOrder trackOrder;
     private int track;
 
     private final List<String> color;
@@ -41,11 +41,11 @@ public class CreatingOrderTest {
     public void setup(){
         orderResponse = new OrderResponse();
     }
-//todo PUT Orders - Отменить заказ не работает
-//    @After
-//    public void tearDown(){
-//        orderResponse.cancellationOrder(trackOrder.getTrackOrder(track));
-//    }
+
+    @After
+    public void tearDown(){
+        orderResponse.cancellationOrder(trackOrder.getTrackOrder(track));
+    }
 
     @Test
     @DisplayName("Creating an order")

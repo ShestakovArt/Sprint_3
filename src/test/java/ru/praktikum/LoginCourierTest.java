@@ -1,7 +1,7 @@
 package ru.praktikum;
 
 import io.qameta.allure.junit4.DisplayName;
-import jdk.jfr.Description;
+import io.qameta.allure.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,10 +31,19 @@ public class LoginCourierTest {
     public void testSuccessfulAuthorizationCourier(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
         assertTrue("Курьер не залогинился", courierId > 0);
     }
 
@@ -44,7 +53,12 @@ public class LoginCourierTest {
     public void testCourierAuthorizationWithoutPassword(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
         courierClient.loginResponse(new CourierCredentials(courier.login, "")).statusCode(SC_BAD_REQUEST);
@@ -56,7 +70,12 @@ public class LoginCourierTest {
     public void testCourierAuthorizationWithoutLogin(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
         courierClient.loginResponse(new CourierCredentials("", courier.password)).statusCode(SC_BAD_REQUEST);
@@ -68,12 +87,21 @@ public class LoginCourierTest {
     public void testAuthorizationWithIncorrectCourierLogin(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
         courierClient.loginResponse(new CourierCredentials(courier.login + "1", courier.password)).statusCode(SC_NOT_FOUND);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
     }
 
     @Test
@@ -82,11 +110,20 @@ public class LoginCourierTest {
     public void testAuthorizationWithIncorrectCourierPassword(){
         Courier courier = Courier.getRandom();
 
-        boolean isCreated = courierClient.created(courier);
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
         assertTrue("Курьер не создан", isCreated);
 
         courierClient.loginResponse(new CourierCredentials(courier.login, courier.password + "0")).statusCode(SC_NOT_FOUND);
 
-        courierId = courierClient.login(CourierCredentials.getCourierCredentials(courier));
+        courierId = courierClient.loginResponse(CourierCredentials.getCourierCredentials(courier))
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .path("id");
     }
 }

@@ -1,6 +1,14 @@
 package ru.praktikum;
 
 public class CourierCredentials {
+    @Override
+    public String toString() {
+        return "CourierCredentials{" +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
+
     public final String login;
     public final String password;
 

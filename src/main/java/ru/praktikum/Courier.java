@@ -1,8 +1,17 @@
 package ru.praktikum;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import com.github.javafaker.Faker;
 
 public class Courier {
+    @Override
+    public String toString() {
+        return "Courier{" +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                '}';
+    }
+
     public final String login;
     public final String password;
     public final String firstName;
@@ -14,9 +23,10 @@ public class Courier {
     }
 
     public static Courier getRandom(){
-        final String login = RandomStringUtils.randomAlphabetic(10);
-        final String password = RandomStringUtils.randomAlphabetic(10);
-        final String firstName = RandomStringUtils.randomAlphabetic(10);
+        Faker faker = new Faker();
+        final String login = faker.name().firstName();
+        final String password = faker.name().firstName();
+        final String firstName = faker.name().firstName();
         return new Courier(login, password, firstName);
     }
 }

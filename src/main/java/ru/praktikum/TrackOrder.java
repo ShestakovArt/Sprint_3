@@ -7,6 +7,13 @@ public class TrackOrder {
         this.track = track;
     }
 
+    @Override
+    public String toString() {
+        return "TrackOrder{" +
+                "track='" + track + '\'' +
+                '}';
+    }
+
     public static TrackOrder getTrackOrder(int trackOrder){
         final String track = String.valueOf(trackOrder);
         return new TrackOrder(track);

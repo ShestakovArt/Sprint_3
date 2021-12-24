@@ -20,34 +20,6 @@ public class CourierClient extends RestAssuredClient{
                 .then();
     }
 
-    @Step("Создание курьера, проверяем статус код и тело ответа)")
-    public boolean created(Courier courier){
-        return given()
-                .spec(getBaseSpec())
-                .body(courier)
-                .when()
-                .post(COURIER_PATH)
-                .then()
-                .assertThat()
-                .statusCode(SC_CREATED)
-                .extract()
-                .path("ok");
-    }
-
-    @Step("Авторизация курьера, проверяем статус код получаем ID курьера)")
-    public int login (CourierCredentials courierCredentials){
-        return given()
-                .spec(getBaseSpec())
-                    .body(courierCredentials)
-                .when()
-                .post(COURIER_PATH + "login")
-                .then()
-                .assertThat()
-                .statusCode(SC_OK)
-                .extract()
-                .path("id");
-    }
-
     @Step("Зпрос на авторизацию курьера")
     public ValidatableResponse loginResponse (CourierCredentials courierCredentials){
         return given()
