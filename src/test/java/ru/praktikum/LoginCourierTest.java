@@ -48,9 +48,9 @@ public class LoginCourierTest {
     }
 
     @Test
-    @DisplayName("Courier authorization without a login")
-    @Description("Авторизация курьера без пароля")
-    public void testCourierAuthorizationWithoutPassword(){
+    @DisplayName("Courier authorization with an empty password field")
+    @Description("Авторизация курьера c пустым полем пароля")
+    public void testCourierAuthorizationWithEmptyPasswordField(){
         Courier courier = Courier.getRandom();
 
         boolean isCreated = courierClient.createResponse(courier)
@@ -65,9 +65,9 @@ public class LoginCourierTest {
     }
 
     @Test
-    @DisplayName("Courier authorization without a password")
-    @Description("Авторизация курьера без логина")
-    public void testCourierAuthorizationWithoutLogin(){
+    @DisplayName("Courier authorization with an empty login field")
+    @Description("Авторизация курьера c пустым полем логина")
+    public void testCourierAuthorizationWithEmptyLoginField(){
         Courier courier = Courier.getRandom();
 
         boolean isCreated = courierClient.createResponse(courier)
@@ -125,5 +125,22 @@ public class LoginCourierTest {
                 .statusCode(SC_OK)
                 .extract()
                 .path("id");
+    }
+
+    @Test
+    @DisplayName("Authorization without specifying a password")
+    @Description("Авторизация без указания пароля")
+    public void AuthorizationWithoutSpecifyingPassword(){
+        Courier courier = Courier.getRandom();
+
+        boolean isCreated = courierClient.createResponse(courier)
+                .assertThat()
+                .statusCode(SC_CREATED)
+                .extract()
+                .path("ok");
+
+        assertTrue("Курьер не создан", isCreated);
+
+        courierClient.loginResponse(new CourierCredentials(courier.login, null)).statusCode(SC_BAD_REQUEST);
     }
 }
